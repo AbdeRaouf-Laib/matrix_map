@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 void main() {
   runApp(MyApp());
@@ -28,53 +28,44 @@ class Page extends StatefulWidget {
 
 class _PageState extends State<Page> {
   LatLng? confirmedPosition;
+  LatLng? _initialPosition;
+  Future<LatLng?> _getCurrentLocation() async {
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return _initialPosition;
+    }
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return _initialPosition;
+      }
+    }
+    if (permission == LocationPermission.deniedForever) {
+      return _initialPosition;
+    }
+    Position position = await Geolocator.getCurrentPosition();
+    return LatLng(position.latitude, position.longitude);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-<<<<<<< HEAD
-      body: Container(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              InkWell(
-                onTap: () async {
-                  final result = await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => MapScreen(addNewMarker: true),
-                    ),
-                  );
-                  if (result is LatLng) {
-                    setState(() {
-                      confirmedPosition = result;
-                    });
-                  }
-                },
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.red,
-                    borderRadius: BorderRadius.all(Radius.circular(20)),
-                  ),
-                  padding: EdgeInsets.symmetric(vertical: 15, horizontal: 50),
-                  child: Text(
-                    "New",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700,
-                    ),
-=======
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             InkWell(
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => MapScreen()),
-              ),
+              onTap: () {
+                _getCurrentLocation().then((pos) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => MapScreen(pos: pos),
+                    ),
+                  );
+                });
+              },
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.red,
@@ -87,7 +78,6 @@ class _PageState extends State<Page> {
                     color: Colors.white,
                     fontSize: 15,
                     fontWeight: FontWeight.w700,
->>>>>>> f150f8e2ca07831f6387e1503a100941294e4038
                   ),
                 ),
               ),
@@ -98,7 +88,7 @@ class _PageState extends State<Page> {
                 context,
                 MaterialPageRoute(
                   builder: (context) =>
-                      MapScreen(pos: LatLng(25.254554, 7.03242)),
+                      MapScreen(pos: LatLng(22.2325, 12.22121)),
                 ),
               ),
               child: Container(
@@ -116,20 +106,8 @@ class _PageState extends State<Page> {
                   ),
                 ),
               ),
-<<<<<<< HEAD
-              if (confirmedPosition != null) ...[
-                SizedBox(height: 30),
-                Text(
-                  'Confirmed position: (${confirmedPosition!.latitude.toStringAsFixed(6)}, ${confirmedPosition!.longitude.toStringAsFixed(6)})',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-              ],
-            ],
-          ),
-=======
             ),
           ],
->>>>>>> f150f8e2ca07831f6387e1503a100941294e4038
         ),
       ),
     );
@@ -137,40 +115,30 @@ class _PageState extends State<Page> {
 }
 
 class MapScreen extends StatefulWidget {
-<<<<<<< HEAD
-  const MapScreen({super.key, this.pos});
   final LatLng? pos;
-=======
-  final bool addNewMarker;
-  const MapScreen({super.key, this.addNewMarker = false});
+  const MapScreen({super.key, this.pos});
 
->>>>>>> e47f6a5d1825d6ee00c6906c9d339764f63477fe
   @override
   _MapScreenState createState() => _MapScreenState();
 }
 
 class _MapScreenState extends State<MapScreen> {
   late GoogleMapController mapController;
-<<<<<<< HEAD
-  LatLng? _selectedPosition; // Default position
-  final Set<Marker> _markers = {};
-=======
   final LatLng _initialPosition = const LatLng(
     36.7538,
     3.0598,
   ); // Default position
   Set<Marker> _markers = {};
->>>>>>> e47f6a5d1825d6ee00c6906c9d339764f63477fe
   bool _isLoading = true;
   Marker? _tempMarker;
   bool _waitingForConfirmation = false;
   LatLng? _tempMarkerPosition;
-
+  LatLng? _selectedPosition;
   @override
-  void initState() {
+  void initState() async {
     super.initState();
-    _selectedPosition = widget.pos;
-   
+    _selectedPosition =await widget.pos;
+
     // _fetchMarkersFromDB();
   }
 
@@ -230,44 +198,6 @@ class _MapScreenState extends State<MapScreen> {
     // });
   }
 
-  Future<LatLng> _getCurrentLocation() async {
-    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      return _initialPosition;
-    }
-    LocationPermission permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return _initialPosition;
-      }
-    }
-    if (permission == LocationPermission.deniedForever) {
-      return _initialPosition;
-    }
-    Position position = await Geolocator.getCurrentPosition();
-    return LatLng(position.latitude, position.longitude);
-  }
-
-  Future<void> _addMarkerAtCurrentLocation() async {
-    setState(() {
-      _waitingForConfirmation = true;
-    });
-    LatLng currentPosition = await _getCurrentLocation();
-    setState(() {
-      _tempMarkerPosition = currentPosition;
-      _tempMarker = Marker(
-        markerId: MarkerId('temp'),
-        position: _tempMarkerPosition!,
-        infoWindow: InfoWindow(title: 'New Marker'),
-        icon: BitmapDescriptor.defaultMarkerWithHue(
-          BitmapDescriptor.hueAzure,
-        ),
-      );
-    });
-    mapController.animateCamera(CameraUpdate.newLatLng(_tempMarkerPosition!));
-  }
-
   void _onCameraMove(CameraPosition position) {
     if (_waitingForConfirmation) {
       setState(() {
@@ -282,6 +212,20 @@ class _MapScreenState extends State<MapScreen> {
         );
       });
     }
+  }
+
+  Future<void> _addMarkerAtCurrentLocation() async {
+    LatLng? currentPosition = widget.pos;
+    setState(() {
+      _tempMarkerPosition = currentPosition;
+      _tempMarker = Marker(
+        markerId: MarkerId('temp'),
+        position: _tempMarkerPosition!,
+        infoWindow: InfoWindow(title: 'New Marker'),
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+      );
+    });
+    mapController.animateCamera(CameraUpdate.newLatLng(_tempMarkerPosition!));
   }
 
   void _confirmMarker() {
@@ -310,44 +254,6 @@ class _MapScreenState extends State<MapScreen> {
             mapType: MapType.normal,
             onMapCreated: (controller) {
               mapController = controller;
-<<<<<<< HEAD
-              // Center the map on the initial position
-              mapController.animateCamera(
-                CameraUpdate.newLatLng(_selectedPosition ?? LatLng(21, 15)),
-              );
-            },
-            initialCameraPosition: CameraPosition(
-              target: _selectedPosition ?? LatLng(21, 15),
-              zoom: 11.0,
-            ),
-            // markers: {
-            //   Marker(
-            //     markerId: MarkerId('selected_location'),
-            //     position: _selectedPosition ?? LatLng(21, 12),
-            //     draggable: true,
-            //     onDragEnd: (newPosition) {
-            //       setState(() {
-            //         _selectedPosition = newPosition;
-            //       });
-            //     },
-            //     icon: BitmapDescriptor.defaultMarkerWithHue(
-            //       BitmapDescriptor.hueRed,
-            //     ),
-            //   ),
-            // },
-            onTap: (latLng) {
-              setState(() {
-                _selectedPosition = latLng;
-              });
-            },
-            myLocationEnabled: false,
-            myLocationButtonEnabled: true,
-
-            // Enable these options for place names
-=======
-              if (widget.addNewMarker) {
-                _addMarkerAtCurrentLocation();
-              }
             },
             initialCameraPosition: CameraPosition(
               target: _initialPosition,
@@ -357,7 +263,6 @@ class _MapScreenState extends State<MapScreen> {
                 ? {..._markers, _tempMarker!}
                 : _markers,
             myLocationEnabled: true,
->>>>>>> e47f6a5d1825d6ee00c6906c9d339764f63477fe
             rotateGesturesEnabled: true,
             tiltGesturesEnabled: true,
             buildingsEnabled: true,
@@ -365,28 +270,10 @@ class _MapScreenState extends State<MapScreen> {
             zoomControlsEnabled: true,
             onCameraMove: _onCameraMove,
           ),
-<<<<<<< HEAD
-        
+
           Center(child: Icon(Icons.location_pin, size: 40, color: Colors.red)),
-          
         ],
       ),
-=======
-<<<<<<< HEAD
-        ],
-      ),
-      floatingActionButton: _waitingForConfirmation && _tempMarker != null
-          ? FloatingActionButton.extended(
-              onPressed: _confirmMarker,
-              label: Text('Confirm Marker'),
-              icon: Icon(Icons.check),
-            )
-          : null,
-=======
-         
-       
->>>>>>> f150f8e2ca07831f6387e1503a100941294e4038
->>>>>>> e47f6a5d1825d6ee00c6906c9d339764f63477fe
     );
   }
 }
