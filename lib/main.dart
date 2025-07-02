@@ -32,6 +32,7 @@ class _PageState extends State<Page> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+<<<<<<< HEAD
       body: Container(
         child: Center(
           child: Column(
@@ -64,27 +65,55 @@ class _PageState extends State<Page> {
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
                     ),
+=======
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            InkWell(
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MapScreen()),
+              ),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.red,
+                  borderRadius: BorderRadius.all(Radius.circular(20)),
+                ),
+                padding: EdgeInsets.symmetric(vertical: 15, horizontal: 50),
+                child: Text(
+                  "New",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+>>>>>>> f150f8e2ca07831f6387e1503a100941294e4038
                   ),
                 ),
               ),
-              SizedBox(height: 30),
-              InkWell(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.green,
-                    borderRadius: BorderRadius.all(Radius.circular(20)),
-                  ),
-                  padding: EdgeInsets.symmetric(vertical: 15, horizontal: 50),
-                  child: Text(
-                    "Obtine",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700,
-                    ),
+            ),
+            SizedBox(height: 30),
+            InkWell(
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MapScreen()),
+              ),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.green,
+                  borderRadius: BorderRadius.all(Radius.circular(20)),
+                ),
+                padding: EdgeInsets.symmetric(vertical: 15, horizontal: 50),
+                child: Text(
+                  "Obtine",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
+<<<<<<< HEAD
               if (confirmedPosition != null) ...[
                 SizedBox(height: 30),
                 Text(
@@ -94,6 +123,10 @@ class _PageState extends State<Page> {
               ],
             ],
           ),
+=======
+            ),
+          ],
+>>>>>>> f150f8e2ca07831f6387e1503a100941294e4038
         ),
       ),
     );
@@ -256,8 +289,7 @@ class _MapScreenState extends State<MapScreen> {
           IconButton(icon: Icon(Icons.refresh), onPressed: _fetchMarkersFromDB),
         ],
       ),
-      body: Stack(
-        children: [
+      body: 
           GoogleMap(
             mapType: MapType.normal,
             onMapCreated: (controller) {
@@ -281,6 +313,7 @@ class _MapScreenState extends State<MapScreen> {
             zoomControlsEnabled: true,
             onCameraMove: _onCameraMove,
           ),
+<<<<<<< HEAD
         ],
       ),
       floatingActionButton: _waitingForConfirmation && _tempMarker != null
@@ -290,6 +323,10 @@ class _MapScreenState extends State<MapScreen> {
               icon: Icon(Icons.check),
             )
           : null,
+=======
+         
+       
+>>>>>>> f150f8e2ca07831f6387e1503a100941294e4038
     );
   }
 }
