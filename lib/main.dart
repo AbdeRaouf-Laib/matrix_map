@@ -24,52 +24,54 @@ class Page extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              InkWell(
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => MapScreen()),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            InkWell(
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MapScreen()),
+              ),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.red,
+                  borderRadius: BorderRadius.all(Radius.circular(20)),
                 ),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.red,
-                    borderRadius: BorderRadius.all(Radius.circular(20)),
-                  ),
-                  padding: EdgeInsets.symmetric(vertical: 15, horizontal: 50),
-                  child: Text(
-                    "New",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700,
-                    ),
+                padding: EdgeInsets.symmetric(vertical: 15, horizontal: 50),
+                child: Text(
+                  "New",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
-              SizedBox(height: 30),
-              InkWell(
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.green,
-                    borderRadius: BorderRadius.all(Radius.circular(20)),
-                  ),
-                  padding: EdgeInsets.symmetric(vertical: 15, horizontal: 50),
-                  child: Text(
-                    "Obtine",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700,
-                    ),
+            ),
+            SizedBox(height: 30),
+            InkWell(
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MapScreen()),
+              ),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.green,
+                  borderRadius: BorderRadius.all(Radius.circular(20)),
+                ),
+                padding: EdgeInsets.symmetric(vertical: 15, horizontal: 50),
+                child: Text(
+                  "Obtine",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -160,8 +162,7 @@ class _MapScreenState extends State<MapScreen> {
           IconButton(icon: Icon(Icons.refresh), onPressed: _fetchMarkersFromDB),
         ],
       ),
-      body: Stack(
-        children: [
+      body: 
           GoogleMap(
             mapType: MapType.normal,
             onMapCreated: (controller) => mapController = controller,
@@ -178,9 +179,8 @@ class _MapScreenState extends State<MapScreen> {
             zoomGesturesEnabled: true,
             zoomControlsEnabled: true,
           ),
-          Container(decoration: BoxDecoration(color: Colors.white)),
-        ],
-      ),
+         
+       
     );
   }
 }
