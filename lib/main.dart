@@ -120,6 +120,12 @@ class _MapScreenState extends State<MapScreen> {
             zoomGesturesEnabled: true,
             zoomControlsEnabled: true,
           ),
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              
+            ),
+          ),
         ],
       ),
     );
