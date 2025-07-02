@@ -30,6 +30,10 @@ class Page extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               InkWell(
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => MapScreen()),
+                ),
                 child: Container(
                   decoration: BoxDecoration(
                     color: Colors.red,
