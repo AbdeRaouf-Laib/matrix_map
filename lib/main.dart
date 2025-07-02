@@ -53,7 +53,10 @@ class Page extends StatelessWidget {
             InkWell(
               onTap: () => Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => MapScreen()),
+                MaterialPageRoute(
+                  builder: (context) =>
+                      MapScreen(pos: LatLng(25.254554, 7.03242)),
+                ),
               ),
               child: Container(
                 decoration: BoxDecoration(
@@ -62,7 +65,7 @@ class Page extends StatelessWidget {
                 ),
                 padding: EdgeInsets.symmetric(vertical: 15, horizontal: 50),
                 child: Text(
-                  "Obtine",
+                  "Edit",
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 15,
@@ -79,22 +82,24 @@ class Page extends StatelessWidget {
 }
 
 class MapScreen extends StatefulWidget {
-  const MapScreen({super.key});
-
+  const MapScreen({super.key, this.pos});
+  final LatLng? pos;
   @override
   _MapScreenState createState() => _MapScreenState();
 }
 
 class _MapScreenState extends State<MapScreen> {
   late GoogleMapController mapController;
-  final LatLng _initialPosition = const LatLng(0, 0); // Default position
+  LatLng? _selectedPosition; // Default position
   final Set<Marker> _markers = {};
   bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _fetchMarkersFromDB();
+    _selectedPosition = widget.pos;
+   
+    // _fetchMarkersFromDB();
   }
 
   Future<void> _fetchMarkersFromDB() async {
@@ -162,16 +167,44 @@ class _MapScreenState extends State<MapScreen> {
           IconButton(icon: Icon(Icons.refresh), onPressed: _fetchMarkersFromDB),
         ],
       ),
-      body: 
+      body: Stack(
+        children: [
           GoogleMap(
             mapType: MapType.normal,
-            onMapCreated: (controller) => mapController = controller,
+            onMapCreated: (controller) {
+              mapController = controller;
+              // Center the map on the initial position
+              mapController.animateCamera(
+                CameraUpdate.newLatLng(_selectedPosition ?? LatLng(21, 15)),
+              );
+            },
             initialCameraPosition: CameraPosition(
-              target: LatLng(36.7538, 3.0598),
-              zoom: 19,
+              target: _selectedPosition ?? LatLng(21, 15),
+              zoom: 11.0,
             ),
-            markers: _markers,
-            myLocationEnabled: true,
+            // markers: {
+            //   Marker(
+            //     markerId: MarkerId('selected_location'),
+            //     position: _selectedPosition ?? LatLng(21, 12),
+            //     draggable: true,
+            //     onDragEnd: (newPosition) {
+            //       setState(() {
+            //         _selectedPosition = newPosition;
+            //       });
+            //     },
+            //     icon: BitmapDescriptor.defaultMarkerWithHue(
+            //       BitmapDescriptor.hueRed,
+            //     ),
+            //   ),
+            // },
+            onTap: (latLng) {
+              setState(() {
+                _selectedPosition = latLng;
+              });
+            },
+            myLocationEnabled: false,
+            myLocationButtonEnabled: true,
+
             // Enable these options for place names
             rotateGesturesEnabled: true,
             tiltGesturesEnabled: true,
@@ -179,8 +212,11 @@ class _MapScreenState extends State<MapScreen> {
             zoomGesturesEnabled: true,
             zoomControlsEnabled: true,
           ),
-         
-       
+        
+          Center(child: Icon(Icons.location_pin, size: 40, color: Colors.red)),
+          
+        ],
+      ),
     );
   }
 }
