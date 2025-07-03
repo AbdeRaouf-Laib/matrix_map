@@ -30,73 +30,79 @@ class Page extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Obx(() => Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            InkWell(
-              onTap: () async {
-                final result = await Get.to(() => MapScreen(
-                  addNewMarker: true,
-                  initialPosition: null,
-                ));
-                if (result is LatLng) {
-                  posController.confirmedPosition.value = result;
-                }
-              },
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.red,
-                  borderRadius: BorderRadius.all(Radius.circular(20)),
-                ),
-                padding: EdgeInsets.symmetric(vertical: 15, horizontal: 50),
-                child: Text(
-                  "New",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
+        child: Obx(
+          () => Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              InkWell(
+                onTap: () async {
+                  final result = await Get.to(
+                    () => MapScreen(addNewMarker: true, initialPosition: null),
+                  );
+                  if (result is LatLng) {
+                    posController.confirmedPosition.value = result;
+                  }
+                },
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                  ),
+                  padding: EdgeInsets.symmetric(vertical: 15, horizontal: 50),
+                  child: Text(
+                    "New",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                 ),
               ),
-            ),
-            SizedBox(height: 30),
-            InkWell(
-              onTap: posController.confirmedPosition.value == null
-                  ? null
-                  : () async {
-                      final result = await Get.to(() => MapScreen(
-                        addNewMarker: true,
-                        initialPosition: posController.confirmedPosition.value,
-                      ));
-                      if (result is LatLng) {
-                        posController.confirmedPosition.value = result;
-                      }
-                    },
-              child: Container(
-                decoration: BoxDecoration(
-                  color: posController.confirmedPosition.value == null ? Colors.grey : Colors.green,
-                  borderRadius: BorderRadius.all(Radius.circular(20)),
-                ),
-                padding: EdgeInsets.symmetric(vertical: 15, horizontal: 50),
-                child: Text(
-                  "Edit",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-            ),
-            if (posController.confirmedPosition.value != null) ...[
               SizedBox(height: 30),
-              Text(
-                'Confirmed position: (${posController.confirmedPosition.value!.latitude.toStringAsFixed(6)}, ${posController.confirmedPosition.value!.longitude.toStringAsFixed(6)})',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              InkWell(
+                onTap: posController.confirmedPosition.value == null
+                    ? null
+                    : () async {
+                        final result = await Get.to(
+                          () => MapScreen(
+                            addNewMarker: true,
+                            initialPosition:
+                                posController.confirmedPosition.value,
+                          ),
+                        );
+                        if (result is LatLng) {
+                          posController.confirmedPosition.value = result;
+                        }
+                      },
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: posController.confirmedPosition.value == null
+                        ? Colors.grey
+                        : Colors.green,
+                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                  ),
+                  padding: EdgeInsets.symmetric(vertical: 15, horizontal: 50),
+                  child: Text(
+                    "Edit",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
               ),
+              if (posController.confirmedPosition.value != null) ...[
+                SizedBox(height: 30),
+                Text(
+                  'Confirmed position: (${posController.confirmedPosition.value!.latitude.toStringAsFixed(6)}, ${posController.confirmedPosition.value!.longitude.toStringAsFixed(6)})',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+              ],
             ],
-          ],
-        )),
+          ),
+        ),
       ),
     );
   }
@@ -208,7 +214,9 @@ class _MapScreenState extends State<MapScreen> {
           markerId: MarkerId('temp'),
           position: _tempMarkerPosition!,
           infoWindow: InfoWindow(title: 'New Marker'),
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+          icon: BitmapDescriptor.defaultMarkerWithHue(
+            BitmapDescriptor.hueAzure,
+          ),
         );
       });
     }
@@ -228,13 +236,11 @@ class _MapScreenState extends State<MapScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Map with DB Markers'),
-      ),
+      appBar: AppBar(title: Text('Map with DB Markers')),
       body: Stack(
         children: [
           GoogleMap(
-            mapType: MapType.normal,
+            mapType: MapType.satellite,
             onMapCreated: (controller) {
               mapController = controller;
               _mapReady = true;
@@ -246,7 +252,9 @@ class _MapScreenState extends State<MapScreen> {
               target: widget.initialPosition ?? _fallbackPosition,
               zoom: 19,
             ),
-            markers: _tempMarker != null ? {..._markers, _tempMarker!} : _markers,
+            markers: _tempMarker != null
+                ? {..._markers, _tempMarker!}
+                : _markers,
             myLocationEnabled: true,
             rotateGesturesEnabled: true,
             tiltGesturesEnabled: true,
@@ -271,7 +279,11 @@ class _MapScreenState extends State<MapScreen> {
                     children: [
                       Icon(Icons.error, color: Colors.red, size: 48),
                       SizedBox(height: 16),
-                      Text(_locationErrorMsg!, style: TextStyle(color: Colors.red, fontSize: 18), textAlign: TextAlign.center),
+                      Text(
+                        _locationErrorMsg!,
+                        style: TextStyle(color: Colors.red, fontSize: 18),
+                        textAlign: TextAlign.center,
+                      ),
                       SizedBox(height: 16),
                       ElevatedButton(
                         onPressed: () {
@@ -286,7 +298,11 @@ class _MapScreenState extends State<MapScreen> {
             ),
         ],
       ),
-      floatingActionButton: _waitingForConfirmation && _tempMarker != null && !_isLoading && !_locationError
+      floatingActionButton:
+          _waitingForConfirmation &&
+              _tempMarker != null &&
+              !_isLoading &&
+              !_locationError
           ? FloatingActionButton.extended(
               onPressed: _confirmMarker,
               label: Text('Confirm Marker'),
